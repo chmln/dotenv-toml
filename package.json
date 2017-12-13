@@ -3,13 +3,17 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc -p tsconfig.json",
+    "test": "jest --config .jest.json"
   },
   "dependencies": {
-    "toml": "^2.3.3"
+    "toml-j0.4": "^1.1.1"
   },
   "devDependencies": {
+    "@types/jest": "^21.1.8",
     "@types/node": "^8.0.58",
+    "jest": "^21.2.1",
+    "ts-jest": "^21.2.4",
     "typescript": "^2.6.2"
   },
   "main": "dist/index.js",

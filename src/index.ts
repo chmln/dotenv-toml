@@ -1,15 +1,36 @@
 import { readFileSync } from "fs"
-import * as toml from "toml"
+import { resolve } from "path"
+import * as toml from "toml-j0.4"
 
 export interface Options {
   path: string
+  intoEnv: boolean
 }
 
-export const load = ({ path }: Options = { path: ".env" }) => {
-  const env = toml.parse(readFileSync(path).toString());
+const DEFAULTS: Options = { path: ".env.toml", intoEnv: true }
+
+const loadIntoEnv = (env: Record<string, any>, prefix = "") => {
   for (const key in env) {
-    process.env[key] = env[key]
+    const value: any = env[key]
+
+    if (typeof value === "string")
+      process.env[prefix + key] = value;
+
+    else if (typeof value === "number")
+      process.env[prefix + key] = value.toString();
+
+    else if (value instanceof Date)
+      process.env[prefix + key] = value.toJSON();
+
+    else if (typeof value === "object")
+      loadIntoEnv(value, `${prefix}${key}_`)
   }
+}
+
+export const load = ({ path, intoEnv }: Options = DEFAULTS) => {
+  const env = toml.parse(readFileSync(resolve(process.cwd(), path)).toString());
+  intoEnv !== false && loadIntoEnv(env)
+  return env
 }
 
 export default load
