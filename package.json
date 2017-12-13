@@ -1,6 +1,6 @@
 {
   "name": "dotenv-toml",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -19,5 +19,5 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "homepage": "https://github.com/chmln/dotenv-toml",
-  "repository" : "chmln/dotenv-toml"
+  "repository": "chmln/dotenv-toml"
 }
