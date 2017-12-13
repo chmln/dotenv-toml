@@ -17,5 +17,7 @@
     "typescript": "^2.6.2"
   },
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts"
+  "typings": "dist/index.d.ts",
+  "homepage": "https://github.com/chmln/dotenv-toml",
+  "repository" : "chmln/dotenv-toml"
 }
