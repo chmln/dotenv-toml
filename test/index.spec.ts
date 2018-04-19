@@ -9,7 +9,7 @@ describe("Load .env", () => {
   })
 
   it("Parses and returns toml without env", () => {
-    const env = load({ path: "./test/.env.toml", intoEnv: false });
+    const {parsed: env} = load({ path: "./test/.env.toml", intoEnv: false });
     expect(env.topKey).toEqual("topValue")
     expect(env.SECTION3.date).toBeDefined()
     expect(Array.isArray(env.SECTION4.arr)).toBeTruthy()

@@ -1,11 +1,11 @@
 import { readFileSync } from "fs"
-import { resolve } from "path"
+
 import * as toml from "toml-j0.4"
 
 export interface Options {
-  path?: string
+  encoding?: string
   intoEnv?: boolean
-  throwErr?: boolean
+  path?: string
 }
 
 const loadIntoEnv = (env: Record<string, any>, prefix = "") => {
@@ -26,18 +26,20 @@ const loadIntoEnv = (env: Record<string, any>, prefix = "") => {
   }
 }
 
-export const load = ({ path = ".env.toml", intoEnv = true, throwErr = false }: Options) => {
-
+export const load = function({
+  encoding = 'utf8',
+  intoEnv = true,
+  path = '.env.toml'
+}: Options)
+{
   try {
-    const env = toml.parse(readFileSync(resolve(process.cwd(), path)).toString());
-    intoEnv !== false && loadIntoEnv(env)
-    return env
+    const parsed = toml.parse(readFileSync(path, encoding));
+    intoEnv !== false && loadIntoEnv(parsed)
+    return {parsed}
   }
 
-  catch (e) {
-    if (throwErr)
-     throw new Error(e);
-    return {}
+  catch (error) {
+    return {error}
   }
 }
 
