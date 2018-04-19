@@ -8,8 +8,15 @@ describe("Load .env", () => {
     expect(process.env.SECTION2_KEY).toEqual("123")
   })
 
+  it("Properly loads toml file into env as JSON", () => {
+    load({ path: "./test/.env.toml", intoEnv: true, useJson: true });
+    expect(process.env.topKey).toEqual("topValue")
+    expect(JSON.parse(process.env.SECTION1)).toEqual({KEY: 'value'})
+    expect(JSON.parse(process.env.SECTION2)).toEqual({KEY: 123})
+  })
+
   it("Parses and returns toml without env", () => {
-    const env = load({ path: "./test/.env.toml", intoEnv: false });
+    const {parsed: env} = load({ path: "./test/.env.toml", intoEnv: false });
     expect(env.topKey).toEqual("topValue")
     expect(env.SECTION3.date).toBeDefined()
     expect(Array.isArray(env.SECTION4.arr)).toBeTruthy()

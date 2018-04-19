@@ -1,19 +1,24 @@
 import { readFileSync } from "fs"
-import { resolve } from "path"
+
 import * as toml from "toml-j0.4"
 
 export interface Options {
-  path?: string
+  encoding?: string
   intoEnv?: boolean
-  throwErr?: boolean
+  path?: string
+  useJson?: boolean
 }
 
-const loadIntoEnv = (env: Record<string, any>, prefix = "") => {
+const loadIntoEnv = function(env: Record<string, any>, useJson=false, prefix="")
+{
   for (const key in env) {
     const value: any = env[key]
 
     if (typeof value === "string")
       process.env[prefix + key] = value;
+
+    else if (useJson)
+      process.env[prefix + key] = JSON.stringify(value);
 
     else if (typeof value === "number")
       process.env[prefix + key] = value.toString();
@@ -22,22 +27,25 @@ const loadIntoEnv = (env: Record<string, any>, prefix = "") => {
       process.env[prefix + key] = value.toJSON();
 
     else if (typeof value === "object")
-      loadIntoEnv(value, `${prefix}${key}_`)
+      loadIntoEnv(value, useJson, `${prefix}${key}_`)
   }
 }
 
-export const load = ({ path = ".env.toml", intoEnv = true, throwErr = false }: Options) => {
-
+export const load = function({
+  encoding = 'utf8',
+  intoEnv = true,
+  path = '.env.toml',
+  useJson = false
+}: Options)
+{
   try {
-    const env = toml.parse(readFileSync(resolve(process.cwd(), path)).toString());
-    intoEnv !== false && loadIntoEnv(env)
-    return env
+    const parsed = toml.parse(readFileSync(path, encoding));
+    intoEnv !== false && loadIntoEnv(parsed, useJson)
+    return {parsed}
   }
 
-  catch (e) {
-    if (throwErr)
-     throw new Error(e);
-    return {}
+  catch (error) {
+    return {error}
   }
 }
 
